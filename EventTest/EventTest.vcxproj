@@ -112,11 +112,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\EventDriven\EventHandler.cpp" />
     <ClCompile Include="..\EventDriven\IEvent.cpp" />
     <ClCompile Include="..\EventDriven\IEventDelegate.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\EventDriven\EventHandler.h" />
     <ClInclude Include="..\EventDriven\IEvent.h" />
     <ClInclude Include="..\EventDriven\IEventDelegate.h" />
     <ClInclude Include="..\EventDriven\TypeTools.h" />
