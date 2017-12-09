@@ -26,4 +26,5 @@ public:
 template<typename Series>
 size_t TypeIDGenerator<Series>::distribID = 0;
 
+
 } // namespace TypeIDTools
