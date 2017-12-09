@@ -24,12 +24,24 @@
     <ClInclude Include="IEventDelegate.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IEventDispatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IEvent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="IEventDelegate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IEventDispatcher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
