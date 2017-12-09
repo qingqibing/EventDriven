@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\GitHub\C_C++\Library;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub\C_C++\Library;$(SolutionDir)/EventDriven/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,7 +112,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\EventDriven\IEvent.cpp" />
+    <ClCompile Include="..\EventDriven\IEventDelegate.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\EventDriven\IEvent.h" />
+    <ClInclude Include="..\EventDriven\IEventDelegate.h" />
+    <ClInclude Include="..\EventDriven\TypeTools.h" />
+    <ClInclude Include="TryEventDelegate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
