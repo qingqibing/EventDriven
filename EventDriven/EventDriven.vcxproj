@@ -19,7 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IEvent.h" />
+    <ClInclude Include="IEventDelegate.h" />
     <ClInclude Include="TypeTools.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IEvent.cpp" />
+    <ClCompile Include="IEventDelegate.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1443F327-E3AC-404C-9622-79732F5437F9}</ProjectGuid>

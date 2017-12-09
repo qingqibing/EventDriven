@@ -18,5 +18,19 @@
     <ClInclude Include="TypeTools.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IEvent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IEventDelegate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IEvent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IEventDelegate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
