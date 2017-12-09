@@ -14,9 +14,15 @@ public:
 	int x, y;
 };
 
+struct TestEventSencond
+{
+public:
+	int r, g, b;
+};
+
 class TestListener
 {
-	
+public:
 	void waitTestEvent(TestEvent * e)
 	{
 		std::cout 
@@ -28,10 +34,30 @@ class TestListener
 	}
 
 public:
-	void registerDelegate(std::vector<Event::IEventDelegate *>& queue)
+	void registerDelegate(std::vector<Event::EventDelegate<TestEvent> *>& queue)
 	{
-		queue.push_back(new Event::EventDelegate<TestListener, TestEvent>(this, &TestListener::waitTestEvent));
+		queue.push_back(
+			new Event::EventDelegateWrapper<TestListener, TestEvent>(this, &TestListener::waitTestEvent));
 	}
 
 	int recvX, recvY;
 };
+
+struct TestListenerSecond
+{
+public:
+
+	void waitSecondEvent(TestEventSencond * e)
+	{
+		_r = e->r;
+		_g = e->g;
+		_b = e->b;
+	}
+
+	int _r, _g, _b;
+};
+
+inline void someFunc()
+{
+	static int a = 0;
+}
