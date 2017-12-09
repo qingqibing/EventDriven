@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace TypeTools
+namespace TypeTool
 {
 
 // this struct is used to generate the id for specific type,
@@ -24,7 +24,7 @@ public:
 
 // initialize the series id of the specific Series type
 template<typename Series>
-size_t TypeIDGenerator<Series>::distribID = 0;
+size_t IDGenerator<Series>::distribID = 0;
 
 
 } // namespace TypeIDTools
