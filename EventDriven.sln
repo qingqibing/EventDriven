@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EventDriven", "EventDriven\EventDriven.vcxproj", "{1443F327-E3AC-404C-9622-79732F5437F9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EventTest", "EventTest\EventTest.vcxproj", "{660AB14A-055D-4E1B-BDD1-90540810ED61}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1443F327-E3AC-404C-9622-79732F5437F9} = {1443F327-E3AC-404C-9622-79732F5437F9}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
