@@ -15,16 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TypeTools.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IEventDelegate.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IEventDispatcher.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="EventHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventDispatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventDelegate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventListener.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,9 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventHandler.h" />
-    <ClInclude Include="IEventDelegate.h" />
-    <ClInclude Include="IEventDispatcher.h" />
-    <ClInclude Include="TypeTools.h" />
+    <ClInclude Include="EventDelegate.h" />
+    <ClInclude Include="EventDispatcher.h" />
+    <ClInclude Include="EventListener.h" />
+    <ClInclude Include="TypeTool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventHandler.cpp" />
