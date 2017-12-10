@@ -1,6 +1,7 @@
 #pragma once
-#include "IEventDelegate.h"
-#include "IEventDispatcher.h"
+#include "EventDelegate.h"
+#include "EventDispatcher.h"
+#include "EventListener.h"
 
 namespace Event
 {
@@ -29,10 +30,11 @@ private:
 		// Implement the function to dispatch all the events;
 		void dispatch() override
 		{
-			for (auto & e : bufferedEvents)
+			for (auto * e : bufferedEvents)
 			{
 				dispatcher.dispatch(e);
 			}
+			bufferedEvents.clear();
 		}
 	};
 public:
@@ -43,6 +45,16 @@ public:
 
 	// send every event to corresponding dispathcer.
 	void dispatchAll();
+
+	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+	void registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
+
+	// recursion
+	template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
+	void registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
+	// stop recursion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	template<typename DERIVED_LISTENER>
+	void registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
 
 
 private:
@@ -73,6 +85,26 @@ inline void EventHandler::sendEvent(EVENT_TYPE * e)
 {
 	static EventHandler::EventMarket<EVENT_TYPE> * eventMarket = getEventMarket<EVENT_TYPE>();
 	eventMarket->bufferedEvents.push_back(e);
+}
+
+template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+inline void EventHandler::registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>* pListener)
+{
+	registerListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
+		(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
+}
+
+template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
+inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener)
+{
+	addDelegate<FIRST_EVENT>(pListener->getDelegate<FIRST_EVENT>());
+	registerListenerRecursion<DERIVED_LISTENER, REST_EVENTS...>(pListener);
+}
+
+template<typename DERIVED_LISTENER>
+inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
+{
+	// stop the recursion.
 }
 
 template<typename EVENT_TYPE>
