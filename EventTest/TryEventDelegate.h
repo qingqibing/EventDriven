@@ -1,9 +1,10 @@
 #pragma once
 
-#include <TypeTools.h>
-#include <IEventDelegate.h>
+#include <TypeTool.h>
+#include <EventDelegate.h>
 #include <iostream>
 #include <vector>
+#include <EventListener.h>
 
 class TestEvent
 {
@@ -55,7 +56,137 @@ public:
 	int _r, _g, _b;
 };
 
-inline void someFunc()
+struct EventA
 {
-	static int a = 0;
-}
+	int data;
+};
+struct EventB
+{
+	int data;
+};
+
+struct EventC
+{
+	int data;
+};
+
+struct EventD
+{
+	int data;
+};
+
+struct EventE
+{
+	int data;
+};
+
+struct ListnerA
+{
+public:
+	bool getEventA;
+	int eventAData = 0;
+
+	bool getEventB;
+	int eventBData = 0;
+
+	void waitEventA(EventA * e)
+	{
+		eventAData = e->data;
+	}
+
+	void waitEventB(EventB * e)
+	{
+		eventBData = e->data;
+	}
+
+	auto getDelegateA()
+	{
+		return new Event::EventDelegateWrapper<ListnerA, EventA>(this, &ListnerA::waitEventA);
+	}
+
+	auto getDelegateB()
+	{
+		return new Event::EventDelegateWrapper<ListnerA, EventB>(this, &ListnerA::waitEventB);
+	}
+};
+
+
+struct ListnerB
+{
+public:
+	bool getEventA;
+	int eventAData = 0;
+
+	bool getEventB;
+	int eventBData = 0;
+
+	void waitEventA(EventA * e)
+	{
+		eventAData = e->data;
+	}
+
+	void waitEventB(EventB * e)
+	{
+		eventBData = e->data;
+	}
+
+	auto getDelegateA()
+	{
+		return new Event::EventDelegateWrapper<ListnerB, EventA>(this, &ListnerB::waitEventA);
+	}
+
+	auto getDelegateB()
+	{
+		return new Event::EventDelegateWrapper<ListnerB, EventB>(this, &ListnerB::waitEventB);
+	}
+};
+
+
+class AdvanceListener
+	:public Event::EventListener<AdvanceListener, EventA, EventB>
+{
+public:
+	void ListenEvent(EventA * e)
+	{
+		printf("TestListener get EventA\n");
+		eventAData = e->data;
+	}
+
+	void ListenEvent(EventB * e)
+	{
+		printf("TestListener get EventB\n");
+		eventBData = e->data;
+	}
+
+public:
+	int eventAData = 0;
+	int eventBData = 0;
+};
+
+class SecondAdvanceListener
+	:public Event::EventListener<SecondAdvanceListener, EventC, EventD, EventE>
+{
+public:
+	void ListenEvent(EventC * e)
+	{
+		printf("SAL recieve a EventC\n");
+		eventCData += e->data;
+	}
+
+	void ListenEvent(EventD * e)
+	{
+		printf("SAL recieve a EventD\n");
+		eventDData += e->data;
+	}
+
+	void ListenEvent(EventE * e)
+	{
+		printf("SAL recieve a EventE\n");
+		eventEData += e->data;
+	}
+
+public:
+	int eventCData = 0;
+	int eventDData = 0;
+	int eventEData = 0;
+};
