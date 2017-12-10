@@ -1,5 +1,5 @@
 #pragma once
-#include "IEventDelegate.h"
+#include "EventDelegate.h"
 #include <vector>
 
 namespace Event
@@ -32,7 +32,7 @@ inline EventDispatcher<EVENT_TYPE>::~EventDispatcher()
 template<typename EVENT_TYPE>
 inline void EventDispatcher<EVENT_TYPE>::dispatch(EVENT_TYPE * e)
 {
-	for (auto & dlgate : delegateList)
+	for (auto * dlgate : delegateList)
 	{
 		dlgate->invoke(e);
 	}
