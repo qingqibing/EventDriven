@@ -1,11 +1,10 @@
 #include <iostream>
 #include <stdio.h>
 #include <MyTools/UnitTestModules.h>
-#include "../EventDriven/TypeTools.h"
-#include <TypeTools.h>
-#include <IEventDelegate.h>
+#include <TypeTool.h>
+#include <EventDelegate.h>
 #include "TryEventDelegate.h"
-#include <IEventDispatcher.h>
+#include <EventDispatcher.h>
 #include <EventHandler.h>
 
 #pragma comment(lib, "EventDriven")
@@ -136,6 +135,81 @@ void AddTestUnit()
 
 		return error == 0;
 	TEST_UNIT_END;
+
+	TEST_UNIT_START("test delegate id")
+		int error = 0;
+		ListnerA lisA;
+		Event::EventDelegate<EventA> * delegateAA = lisA.getDelegateA();
+		Event::EventDelegate<EventB> * delegateAB = lisA.getDelegateB();
+
+		ListnerB lisB;
+		auto * delegateBA = lisB.getDelegateA();
+		auto * delegateBB = lisB.getDelegateB();
+
+		error += (*delegateAA) == (*delegateBA);
+		error += (*delegateAB) == (*delegateBB);
+		return error == 0;
+	TEST_UNIT_END;
+
+	TEST_UNIT_START("test event listener")
+		int error = 0;
+		Event::EventHandler eHandler;
+		
+		AdvanceListener advListener;
+		SecondAdvanceListener secondAListener;
+
+		eHandler.registerListener(&advListener);
+		eHandler.registerListener(&secondAListener);
+
+		EventA testEventA;
+		EventB testEventB;
+
+		EventC testEventC_1;
+		EventD testEventD_1;
+		EventE testEventE_1;
+		//||||||||||||||||||
+		EventD testEventD_2;
+		EventE testEventE_2;
+
+		testEventA.data = 5;
+		testEventB.data = 8;
+		testEventC_1.data = 1;
+		testEventD_1.data = 2;
+		testEventE_1.data = 3;
+		//|||||||||||||||||||
+		testEventD_2.data = 4;
+		testEventE_2.data = 5;
+
+		eHandler.sendEvent(&testEventA);
+		eHandler.sendEvent(&testEventB);
+		eHandler.sendEvent(&testEventC_1);
+		eHandler.sendEvent(&testEventD_1);
+		eHandler.sendEvent(&testEventE_1);
+		eHandler.sendEvent(&testEventD_2);
+		eHandler.sendEvent(&testEventE_2);
+
+
+		error += EQ(5, advListener.eventAData);
+		error += EQ(8, advListener.eventBData);
+		// ensure the secondAListener's initial event data is all 0¡£
+		error += NOT_EQ(0, secondAListener.eventCData);
+		error += NOT_EQ(0, secondAListener.eventDData);
+		error += NOT_EQ(0, secondAListener.eventEData);
+
+		eHandler.dispatchAll();
+
+		error += NOT_EQ(5, advListener.eventAData);
+		error += NOT_EQ(8, advListener.eventBData);
+		// 1
+		error += NOT_EQ(1, secondAListener.eventCData);
+		// 2 + 4 = 6
+		error += NOT_EQ(6, secondAListener.eventDData);
+		// 3 + 5 = 8
+		error += NOT_EQ(8, secondAListener.eventEData);
+
+		return error == 0;
+	TEST_UNIT_END;
+
 }
 }// namespace TestUnit
 
