@@ -3,15 +3,12 @@
 #include <MyTools/UnitTestModules.h>
 #include "../EventDriven/TypeTools.h"
 #include <TypeTools.h>
-#include <IEvent.h>
 #include <IEventDelegate.h>
 #include "TryEventDelegate.h"
 #include <IEventDispatcher.h>
 #include <EventHandler.h>
 
-void testStaticBlock()
-{
-}
+#pragma comment(lib, "EventDriven")
 
 DECLARE_TEST_UNITS;
 
