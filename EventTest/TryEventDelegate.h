@@ -1,13 +1,11 @@
 #pragma once
 
 #include <TypeTools.h>
-#include <IEvent.h>
 #include <IEventDelegate.h>
 #include <iostream>
 #include <vector>
 
 class TestEvent
-	:public Event::IEvent
 {
 public:
 	TestEvent() : x(1), y(2) {}
