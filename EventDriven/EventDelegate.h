@@ -1,16 +1,45 @@
 #pragma once
+#include "TypeTool.h"
 
 // This class is the interface of the event call back function.
 namespace Event
 {
+
+typedef size_t ID;
+
+struct DelegateID
+{
+	ID reciever;
+	// this pointer is just used to identify different delegate.
+	ID pReciever;
+	ID event;
+
+	bool operator == (const DelegateID & otherDelegateID) const
+	{
+		return 
+				this->reciever	== otherDelegateID.reciever
+			&&	this->pReciever == otherDelegateID.pReciever
+			&&	this->event		== otherDelegateID.event;
+	}
+};
+
+// this struct have no member, 
+// it is just used to generator the RecieverID.
+struct RecieverSeriesIDSeed {};
+typedef TypeTool::IDGenerator<RecieverSeriesIDSeed> RecvIDGenerator;
+// this struct have no member,
+// it is just used to generator the EventID.
+struct EventSeriesIDSeed {};
+typedef TypeTool::IDGenerator<EventSeriesIDSeed> EventIDGenerator;
 
 template<typename EVENT_TYPE>
 class EventDelegate
 {
 public:
 	virtual void invoke(EVENT_TYPE * event) = 0;
+	virtual DelegateID getID() const = 0;
+	bool operator == (const EventDelegate<EVENT_TYPE> & otherDelegate);
 };
-
 
 // the main target of this class is to wrap the caller,
 // and make it easy to call target function, just like std::bind.
@@ -31,6 +60,7 @@ private:
 	CallBackFunction _callBack;
 	
 	virtual void invoke(EVENT_TYPE * e) override;
+	virtual DelegateID getID() const override;
 	
 };
 
@@ -50,6 +80,19 @@ inline void EventDelegateWrapper<RECIEVER_TYPE, EVENT_TYPE>::invoke(EVENT_TYPE *
 {
 	(_reciever->*_callBack)(e);
 }
-
+template<typename RECIEVER_TYPE, typename EVENT_TYPE>
+inline DelegateID EventDelegateWrapper<RECIEVER_TYPE, EVENT_TYPE>::getID() const
+{
+	static DelegateID delegateID = 
+		{	RecvIDGenerator::newID<RECIEVER_TYPE>(), 
+			reinterpret_cast<Event::ID>(_reciever),
+			EventIDGenerator::newID<EVENT_TYPE>()};
+	return delegateID;
+}
+template<typename EVENT_TYPE>
+inline bool EventDelegate<EVENT_TYPE>::operator==(const EventDelegate<EVENT_TYPE> & otherDelegate)
+{
+	return (this->getID()) == (otherDelegate.getID());
+}
 }// namespace Event
 
