@@ -1,5 +1,4 @@
 #pragma once
-#include "IEvent.h"
 #include "IEventDelegate.h"
 #include "IEventDispatcher.h"
 

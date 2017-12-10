@@ -1,5 +1,4 @@
 #pragma once
-#include "IEvent.h"
 
 // This class is the interface of the event call back function.
 namespace Event
