@@ -1,7 +1,6 @@
 #pragma once
 #include "TypeTool.h"
 
-// This class is the interface of the event call back function.
 namespace Event
 {
 
@@ -32,6 +31,11 @@ typedef TypeTool::IDGenerator<RecieverSeriesIDSeed> RecvIDGenerator;
 struct EventSeriesIDSeed {};
 typedef TypeTool::IDGenerator<EventSeriesIDSeed> EventIDGenerator;
 
+
+// the interface of the Delegate,
+// which will be used to store in the dispatcher<EVENT_TYPE>,
+// and the dispathcer, which is a specific place that can dispatch 
+// one event type to all the registered delegate.
 template<typename EVENT_TYPE>
 class EventDelegate
 {
