@@ -90,6 +90,69 @@ void AddTestUnit()
 		return error == 0;
 	TEST_UNIT_END;
 
+	TEST_UNIT_START("test IEventDispatcher remove delegate")
+		int error = 0;
+		Event::EventDispatcher<TestEvent> dispatcher;
+
+		TestListener listener1;
+
+		TestEvent tEvent1;
+
+		// init events
+		tEvent1.x = 22;
+		tEvent1.y = 33;
+
+		dispatcher.addDelegate(
+			new Event::EventDelegateWrapper<TestListener, TestEvent>(
+				&listener1, &TestListener::waitTestEvent));
+
+
+		error += EQ(22, listener1.recvX);
+		error += EQ(33, listener1.recvY);
+
+		dispatcher.dispatch(&tEvent1);
+
+		error += NOT_EQ(22, listener1.recvX);
+		error += NOT_EQ(33, listener1.recvY);
+
+
+		auto * removedDelegate = new Event::EventDelegateWrapper<TestListener, TestEvent>(
+			&listener1, &TestListener::waitTestEvent);
+		// then we remove the delegate
+		dispatcher.removeDelegate(removedDelegate);
+
+		// then we reset the listener's data to see if it can receive the event,
+		// correctly its data should not change after the diapatch.
+
+		listener1.recvX = 0;
+		listener1.recvY = 0;
+
+		// ensure the event data is sending the desired data,
+		// and the listener1 should not receive the data.
+		error += NOT_EQ(22, tEvent1.x);
+		error += NOT_EQ(33, tEvent1.y);
+
+		dispatcher.dispatch(&tEvent1);
+		
+		error += NOT_EQ(0, listener1.recvX);
+		error += NOT_EQ(0, listener1.recvY);
+
+		// here we add it again and the dispatcher should send the data to the listener.
+		dispatcher.addDelegate(
+			new Event::EventDelegateWrapper<TestListener, TestEvent>(
+				&listener1, &TestListener::waitTestEvent));
+
+		error += EQ(22, listener1.recvX);
+		error += EQ(33, listener1.recvY);
+
+		dispatcher.dispatch(&tEvent1);
+
+		error += NOT_EQ(22, listener1.recvX);
+		error += NOT_EQ(33, listener1.recvY);
+		
+		return error == 0;
+	TEST_UNIT_END;
+
 	TEST_UNIT_START("test event handler")
 		int error = 0;
 		Event::EventHandler handler;
