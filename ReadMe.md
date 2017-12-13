@@ -1,7 +1,8 @@
 这个工程实现了在编译期间创建的特定事件类型的存储转发
 
 使用和注意
-EventHandler | EventListener<DerivedClass, Event1, ...>
+
+EventHandler | EventListener&lt;DerivedClass, Event1, ...&gt;
 -------------|---------------
 这是整个事件转发的中心，所有的事件结构体的指针都发送到这个类的一个模板函数中  |  这是一个实现事件响应的类型，我们需要继承这个类，然后编写回调函数，接着注册到EventHandler中。
 
