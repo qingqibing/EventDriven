@@ -276,6 +276,105 @@ void AddTestUnit()
 	TEST_UNIT_END;
 	}
 
+	// test delete delegate from event handler
+	{
+		TEST_UNIT_START("test delete delegate from event handler")
+			int invalidEventAData	= 1;
+			int invalidEventBData	= 2;
+			// |||||||||||||||||||||||||
+			int validEventAData		= 66;
+			int validEventBData		= 55;
+
+			Event::EventHandler handler;
+
+			ListnerA listenerA_1;
+
+			EventA eventA_1;
+			EventB eventB_1;
+			eventA_1.data = validEventAData;
+			eventB_1.data = validEventBData;
+
+			// a lambda to reset the listener.
+			auto resetListener = [&]() {
+				// reset the listener
+				listenerA_1.eventAData = invalidEventAData;
+				listenerA_1.eventBData = invalidEventBData;
+			};
+
+			// create a lambda to send event and dispatch them.
+			auto runEventHandler = [&]() {
+				handler.sendEvent(&eventA_1);
+				handler.sendEvent(&eventB_1);
+
+				// call delegate
+				handler.dispatchAll();
+			};
+
+			auto * delegateA_1 = listenerA_1.getDelegateA();
+			auto * delegateB_1 = listenerA_1.getDelegateB();
+
+			// store the delegate id for later usage.
+			Event::DelegateID dIDA_1 = delegateA_1->getID();
+			Event::DelegateID dIDB_1 = delegateB_1->getID();
+			handler.addDelegate(delegateA_1);
+			handler.addDelegate(delegateB_1);
+
+			runEventHandler();
+
+			// ensure the data is sended
+			errorLogger += NOT_EQ(validEventAData, listenerA_1.eventAData);
+			errorLogger += NOT_EQ(validEventBData, listenerA_1.eventBData);
+
+			// phase one remove delegate of EventA
+			// and test the listener only receive EventB
+			{
+			// just delete the delegate of EventA from the handler
+			handler.removeDelegate<EventA>(dIDA_1);
+
+			resetListener();
+			runEventHandler();
+
+			// ensure only EventB is sended
+			errorLogger += NOT_EQ( invalidEventAData , listenerA_1.eventAData);
+			errorLogger += NOT_EQ(validEventBData, listenerA_1.eventBData);
+			}
+
+			// phase two remove delegate of EventB
+			// re add the delegate of EventA
+			// and test the listener only receive EventA
+			{
+			// the orignal delegateA_1 in the heap should have been delete
+			// in the phase one, (by the dispatcher in the handler).
+			delegateA_1 = listenerA_1.getDelegateA();
+			handler.addDelegate(delegateA_1);
+			handler.removeDelegate<EventB>(dIDB_1);
+
+			resetListener();
+			runEventHandler();
+
+			// ensure only EventA is sended
+			errorLogger += NOT_EQ(validEventAData, listenerA_1.eventAData);
+			errorLogger += NOT_EQ( invalidEventBData , listenerA_1.eventBData);
+			}
+
+			// phase three remove delegate of EventA
+			// now all delegate of the listener have been removed,
+			// it shouldn't receive any event
+			{
+			handler.removeDelegate<EventA>(dIDA_1);
+
+			resetListener();
+			runEventHandler();
+
+			// ensure listener DON'T receive any data.
+			errorLogger += NOT_EQ( invalidEventAData, listenerA_1.eventAData);
+			errorLogger += NOT_EQ( invalidEventBData, listenerA_1.eventBData);
+			}
+
+			return errorLogger.conclusion();
+		TEST_UNIT_END;
+	}
+
 	// test delegate id
 	{
 	TEST_UNIT_START("test delegate id")
@@ -355,7 +454,6 @@ void AddTestUnit()
 		return error == 0;
 	TEST_UNIT_END;
 	}
-
 }
 }// namespace TestUnit
 
