@@ -53,6 +53,9 @@ public:
 	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 	void registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
 
+	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+	void unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
+
 	
 
 	// recursion
@@ -61,6 +64,14 @@ public:
 	// stop recursion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 	template<typename DERIVED_LISTENER>
 	void registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
+
+
+	// recursion
+	template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
+	void unregisterListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
+	// stop recursion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	template<typename DERIVED_LISTENER>
+	void unregisterListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
 
 
 private:
@@ -107,6 +118,13 @@ inline void EventHandler::registerListener(EventListener<DERIVED_LISTENER, LISTE
 		(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
 }
 
+template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+inline void EventHandler::unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>* pListener)
+{
+	unregisterListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
+		(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
+}
+
 template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
 inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener)
 {
@@ -118,6 +136,13 @@ template<typename DERIVED_LISTENER>
 inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
 {
 	// stop the recursion.
+}
+
+template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
+inline void EventHandler::unregisterListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
+{
+	removeDelegate(pListener->getDelegateID<FIRST_EVENT>());
+	unregisterListenerRecursion<DERIVED_LISTENER, REST_EVENTS...>(pListener);
 }
 
 template<typename EVENT_TYPE>
