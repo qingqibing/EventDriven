@@ -40,6 +40,10 @@ private:
 public:
 	template<typename EVENT_TYPE>
 	void addDelegate(EventDelegate<EVENT_TYPE> * dlgate);
+
+	template<typename EVENT_TYPE>
+	void removeDelegate(const DelegateID& removedID);
+
 	template<typename EVENT_TYPE>
 	void sendEvent(EVENT_TYPE* e);
 
@@ -48,6 +52,8 @@ public:
 
 	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 	void registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
+
+	
 
 	// recursion
 	template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
@@ -78,6 +84,13 @@ inline void EventHandler::addDelegate(EventDelegate<EVENT_TYPE>* dlgate)
 {
 	static EventHandler::EventMarket<EVENT_TYPE>* pEMarket = getEventMarket<EVENT_TYPE>();
 	pEMarket->dispatcher.addDelegate(dlgate);
+}
+
+template<typename EVENT_TYPE>
+inline void EventHandler::removeDelegate(const DelegateID& removedID)
+{
+	static auto * pMarket = this->getEventMarket<EVENT_TYPE>();
+	pMarket->dispatcher.removeDelegate(removedID);
 }
 
 template<typename EVENT_TYPE>
