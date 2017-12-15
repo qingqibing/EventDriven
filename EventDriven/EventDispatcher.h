@@ -18,6 +18,7 @@ public:
 	void removeDelegate(InsideDelegate * removedDeletate);
 	// removed the delegate through the deleteGateID
 	void removeDelegate(const DelegateID& removedID);
+	void clearDelegates();
 
 private:
 	std::vector<InsideDelegate*> delegateList;
@@ -78,6 +79,16 @@ inline void EventDispatcher<EVENT_TYPE>::removeDelegate(const DelegateID& remove
 		delete pMm;
 		delegateList.erase(removedLocation);
 	}
+}
+
+template<typename EVENT_TYPE>
+inline void EventDispatcher<EVENT_TYPE>::clearDelegates()
+{
+	for (auto * pDelegate : delegateList)
+	{
+		delete pDelegate;
+	}
+	delegateList.clear();
 }
 
 }// namespace Event

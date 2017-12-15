@@ -14,6 +14,8 @@ public:
 	{
 	public:
 		virtual void dispatch() = 0;
+		// clear and delete all the delegates
+		virtual void clearDelegates() = 0;
 	};
 
 private:
@@ -36,8 +38,15 @@ private:
 			}
 			bufferedEvents.clear();
 		}
+
+		void clearDelegates()
+		{
+			dispatcher.clearDelegates();
+		}
 	};
 public:
+	void clearDelegates();
+
 	template<typename EVENT_TYPE>
 	void addDelegate(EventDelegate<EVENT_TYPE> * dlgate);
 
