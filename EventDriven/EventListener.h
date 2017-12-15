@@ -65,7 +65,7 @@ inline Event::DelegateID IEventListener<DERIVED_LISTENER>::getDelegateID()
 		Event::EventIDGenerator::newID<EVENT>() };
 
 	// set the pointer to the listener
-	returnedID.pReciever = this;
+	returnedID.pReciever = reinterpret_cast<Event::ID>(this);
 	return returnedID;
 }
 
