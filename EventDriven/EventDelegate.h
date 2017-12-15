@@ -58,13 +58,14 @@ public:
 	EventDelegateWrapper(RECIEVER_TYPE * reciever, CallBackFunction callBack);
 	~EventDelegateWrapper();
 
+	virtual void invoke(EVENT_TYPE * e) override;
+	virtual DelegateID getID() const override;
+
 private:
 	RECIEVER_TYPE * _reciever;
 	// the _callBack is a member function pointer of the _reciever.
 	CallBackFunction _callBack;
 	
-	virtual void invoke(EVENT_TYPE * e) override;
-	virtual DelegateID getID() const override;
 	
 };
 
