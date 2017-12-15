@@ -24,10 +24,10 @@ class TestListener
 public:
 	void waitTestEvent(TestEvent * e)
 	{
-		std::cout 
+		/*std::cout 
 			<< "TestListener have receive the TestEvent" << std::endl
 			<< "event.x = " << e->x << std::endl
-			<< "event.y = " << e->y << std::endl;
+			<< "event.y = " << e->y << std::endl;*/
 		recvX = e->x;
 		recvY = e->y;
 	}
@@ -148,13 +148,13 @@ class AdvanceListener
 public:
 	void ListenEvent(EventA * e)
 	{
-		printf("TestListener get EventA\n");
+		//printf("TestListener get EventA\n");
 		eventAData = e->data;
 	}
 
 	void ListenEvent(EventB * e)
 	{
-		printf("TestListener get EventB\n");
+		//printf("TestListener get EventB\n");
 		eventBData = e->data;
 	}
 
@@ -169,19 +169,19 @@ class SecondAdvanceListener
 public:
 	void ListenEvent(EventC * e)
 	{
-		printf("SAL recieve a EventC\n");
+		//printf("SAL recieve a EventC\n");
 		eventCData += e->data;
 	}
 
 	void ListenEvent(EventD * e)
 	{
-		printf("SAL recieve a EventD\n");
+		//printf("SAL recieve a EventD\n");
 		eventDData += e->data;
 	}
 
 	void ListenEvent(EventE * e)
 	{
-		printf("SAL recieve a EventE\n");
+		//printf("SAL recieve a EventE\n");
 		eventEData += e->data;
 	}
 
