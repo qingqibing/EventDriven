@@ -26,6 +26,8 @@ void AfterTest()
 
 void AddTestUnit()
 {
+	// test TypeIDGenerator
+	{
 	TEST_UNIT_START("test TypeIDGenerator")
 		int error = 0;
 		auto int_0 = TypeTool::IDGenerator<int>::newID<int>();
@@ -38,7 +40,10 @@ void AddTestUnit()
 		error += NOT_EQ(int_2, TypeTool::IDGenerator<int>::newID<std::vector<int>>());
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// try eventDelegate
+	{
 	TEST_UNIT_START("try eventDelegate")
 		int error = 0;
 		static std::vector<Event::EventDelegate<TestEvent> *> delegations;
@@ -60,7 +65,10 @@ void AddTestUnit()
 
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// test IEventDispatcher
+	{
 	TEST_UNIT_START("test IEventDispatcher")
 		int error = 0;
 		Event::EventDispatcher<TestEvent> dispatcher;
@@ -89,7 +97,10 @@ void AddTestUnit()
 		
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// test IEventDispatcher remove delegate
+	{
 	TEST_UNIT_START("test IEventDispatcher remove delegate")
 		int error = 0;
 		Event::EventDispatcher<TestEvent> dispatcher;
@@ -152,7 +163,10 @@ void AddTestUnit()
 		
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// test event handler
+	{
 	TEST_UNIT_START("test event handler")
 		int error = 0;
 		Event::EventHandler handler;
@@ -198,7 +212,10 @@ void AddTestUnit()
 
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// test delegate id
+	{
 	TEST_UNIT_START("test delegate id")
 		int error = 0;
 		ListnerA lisA;
@@ -213,7 +230,10 @@ void AddTestUnit()
 		error += (*delegateAB) == (*delegateBB);
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
+	// test event listener
+	{
 	TEST_UNIT_START("test event listener")
 		int error = 0;
 		Event::EventHandler eHandler;
@@ -272,6 +292,7 @@ void AddTestUnit()
 
 		return error == 0;
 	TEST_UNIT_END;
+	}
 
 }
 }// namespace TestUnit
