@@ -16,6 +16,8 @@ public:
 	virtual void dispatch(EVENT_TYPE * e);
 	virtual void addDelegate(InsideDelegate * newDelegate);
 	virtual void removeDelegate(InsideDelegate * removedDeletate);
+	// removed the delegate through the deleteGateID
+	virtual void removeDelegate(DelegateID removedID);
 
 private:
 	std::vector<InsideDelegate*> delegateList;
@@ -61,6 +63,21 @@ inline void EventDispatcher<EVENT_TYPE>::removeDelegate(InsideDelegate * removed
 	}
 
 	// the removedDelegate should not be delete.
+}
+
+template<typename EVENT_TYPE>
+inline void EventDispatcher<EVENT_TYPE>::removeDelegate(DelegateID removedID)
+{
+	auto removedLocation = std::find_if(delegateList.begin(), delegateList.end(),
+		[&removedID](InsideDelegate * cmpDlg) { return *cmpDlg->getID() == removedID; });
+	if (removedLocation != delegateList.end())
+	{
+		InsideDelegate * pMm = reinterpret_cast<InsideDelegate *>(*removedLocation);
+		// the delegate is on the heap,
+		// so we should free its memory.
+		delete pMm;
+		delegateList.erase(removedLocation);
+	}
 }
 
 }// namespace Event
