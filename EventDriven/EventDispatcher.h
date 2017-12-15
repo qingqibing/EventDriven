@@ -17,7 +17,7 @@ public:
 	void addDelegate(InsideDelegate * newDelegate);
 	void removeDelegate(InsideDelegate * removedDeletate);
 	// removed the delegate through the deleteGateID
-	void removeDelegate(DelegateID removedID);
+	void removeDelegate(const DelegateID& removedID);
 
 private:
 	std::vector<InsideDelegate*> delegateList;
@@ -66,7 +66,7 @@ inline void EventDispatcher<EVENT_TYPE>::removeDelegate(InsideDelegate * removed
 }
 
 template<typename EVENT_TYPE>
-inline void EventDispatcher<EVENT_TYPE>::removeDelegate(DelegateID removedID)
+inline void EventDispatcher<EVENT_TYPE>::removeDelegate(const DelegateID& removedID)
 {
 	auto removedLocation = std::find_if(delegateList.begin(), delegateList.end(),
 		[&removedID](InsideDelegate * cmpDlg) { return cmpDlg->getID() == removedID; });
