@@ -69,7 +69,7 @@ template<typename EVENT_TYPE>
 inline void EventDispatcher<EVENT_TYPE>::removeDelegate(DelegateID removedID)
 {
 	auto removedLocation = std::find_if(delegateList.begin(), delegateList.end(),
-		[&removedID](InsideDelegate * cmpDlg) { return *cmpDlg->getID() == removedID; });
+		[&removedID](InsideDelegate * cmpDlg) { return cmpDlg->getID() == removedID; });
 	if (removedLocation != delegateList.end())
 	{
 		InsideDelegate * pMm = reinterpret_cast<InsideDelegate *>(*removedLocation);
