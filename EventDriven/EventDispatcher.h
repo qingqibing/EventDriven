@@ -13,11 +13,11 @@ class EventDispatcher
 public:
 	EventDispatcher();
 	~EventDispatcher();
-	virtual void dispatch(EVENT_TYPE * e);
-	virtual void addDelegate(InsideDelegate * newDelegate);
-	virtual void removeDelegate(InsideDelegate * removedDeletate);
+	void dispatch(EVENT_TYPE * e);
+	void addDelegate(InsideDelegate * newDelegate);
+	void removeDelegate(InsideDelegate * removedDeletate);
 	// removed the delegate through the deleteGateID
-	virtual void removeDelegate(DelegateID removedID);
+	void removeDelegate(DelegateID removedID);
 
 private:
 	std::vector<InsideDelegate*> delegateList;
