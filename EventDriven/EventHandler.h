@@ -150,8 +150,14 @@ inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTE
 template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
 inline void EventHandler::unregisterListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
 {
-	removeDelegate(pListener->getDelegateID<FIRST_EVENT>());
+	removeDelegate<FIRST_EVENT>(pListener->getDelegateID<FIRST_EVENT>());
 	unregisterListenerRecursion<DERIVED_LISTENER, REST_EVENTS...>(pListener);
+}
+
+template<typename DERIVED_LISTENER>
+inline void EventHandler::unregisterListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
+{
+	// stop the recursion of unregisterListenerRecursion()
 }
 
 template<typename EVENT_TYPE>
