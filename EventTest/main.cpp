@@ -382,7 +382,7 @@ void AddTestUnit()
 
 	// test delegate id 
 	{
-	TEST_UNIT_START("test delegate id")
+	TEST_UNIT_START("test delegateID(get from the delegate) can distinguish different delegate")
 		int error = 0;
 		ListnerA lisA;
 		Event::EventDelegate<EventA> * delegateAA = lisA.getDelegateA();
@@ -591,7 +591,6 @@ void AddTestUnit()
 			checkAdvListener_DONT_ReceiveData();
 			checkSecAListener_DONT_ReceiveData();
 			runEventHandler();
-			// only secondAdvListener can receive data.
 			checkAdvListener_DONT_ReceiveData();
 			checkSecAListenerReceiveData();
 			}
@@ -607,7 +606,6 @@ void AddTestUnit()
 			checkAdvListener_DONT_ReceiveData();
 			checkSecAListener_DONT_ReceiveData();
 			runEventHandler();
-			// only secondAdvListener can receive data.
 			checkAdvListenerReceiveData();
 			checkSecAListener_DONT_ReceiveData();
 			}
