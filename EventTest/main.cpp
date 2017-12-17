@@ -530,11 +530,11 @@ void AddTestUnit()
 
 			// helper function to reset the listeners
 			auto resetListeners = [&]() {
-				advListener.eventAData		= invalidEvenAData_1;
-				advListener.eventBData		= invalidEvenBData_1;
-				secondAListener.eventCData	= invalidEvenCData_1;
-				secondAListener.eventDData	= invalidEvenDData_1;
-				secondAListener.eventEData	= invalidEvenEData_1;
+				advListener.eventAData = invalidEvenAData_1;
+				advListener.eventBData = invalidEvenBData_1;
+				secondAListener.eventCData = invalidEvenCData_1;
+				secondAListener.eventDData = invalidEvenDData_1;
+				secondAListener.eventEData = invalidEvenEData_1;
 			};
 
 			auto checkAdvListener_DONT_ReceiveData = [&]() {
@@ -558,72 +558,95 @@ void AddTestUnit()
 				// the secondAListener will accumulate the event data
 				// so we should sum all the invalid and valid data.
 
-				errorLogger += NOT_EQ(invalidEvenCData_1 + validEvenCData_1, 
+				errorLogger += NOT_EQ(invalidEvenCData_1 + validEvenCData_1,
 					secondAListener.eventCData);
 				// secondAListener will receive two EventD and two EventE.
-				errorLogger += NOT_EQ(invalidEvenDData_1 + validEvenDData_1 + validEvenDData_2, 
+				errorLogger += NOT_EQ(invalidEvenDData_1 + validEvenDData_1 + validEvenDData_2,
 					secondAListener.eventDData);
-				errorLogger += NOT_EQ(invalidEvenEData_1 + validEvenEData_1 + validEvenEData_2, 
+				errorLogger += NOT_EQ(invalidEvenEData_1 + validEvenEData_1 + validEvenEData_2,
 					secondAListener.eventEData);
 			};
 
-			
+
 			// register all listener
 			// phase one all listener avaliable
 			// advListener		\/
 			// secondAListener	\/
 			{
-			resetListeners();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListener_DONT_ReceiveData();
-			runEventHandler();
-			checkAdvListenerReceiveData();
-			checkSecAListenerReceiveData();
+				resetListeners();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListener_DONT_ReceiveData();
+				runEventHandler();
+				checkAdvListenerReceiveData();
+				checkSecAListenerReceiveData();
 			}
 
 			// phase two 
 			// advListener		X
 			// secondAListener	\/
 			{
-			eHandler.unregisterListener(&advListener);
+				eHandler.unregisterListener(&advListener);
 
-			resetListeners();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListener_DONT_ReceiveData();
-			runEventHandler();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListenerReceiveData();
+				resetListeners();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListener_DONT_ReceiveData();
+				runEventHandler();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListenerReceiveData();
 			}
 
 			// phase three 
 			// advListener		\/
 			// secondAListener	X
 			{
-			eHandler.registerListener(&advListener);
-			eHandler.unregisterListener(&secondAListener);
+				eHandler.registerListener(&advListener);
+				eHandler.unregisterListener(&secondAListener);
 
-			resetListeners();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListener_DONT_ReceiveData();
-			runEventHandler();
-			checkAdvListenerReceiveData();
-			checkSecAListener_DONT_ReceiveData();
+				resetListeners();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListener_DONT_ReceiveData();
+				runEventHandler();
+				checkAdvListenerReceiveData();
+				checkSecAListener_DONT_ReceiveData();
 			}
 
 			// phase four
 			// advListener		X
 			// secondAListener	X
 			{
-			eHandler.unregisterListener(&advListener);
+				eHandler.unregisterListener(&advListener);
 
-			resetListeners();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListener_DONT_ReceiveData();
-			runEventHandler();
-			checkAdvListener_DONT_ReceiveData();
-			checkSecAListener_DONT_ReceiveData();
+				resetListeners();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListener_DONT_ReceiveData();
+				runEventHandler();
+				checkAdvListener_DONT_ReceiveData();
+				checkSecAListener_DONT_ReceiveData();
 			}
 
+			return errorLogger.conclusion();
+			TEST_UNIT_END;
+	}
+
+	// test singleEventListener
+	{
+		TEST_UNIT_START("test singleEventListener")
+			
+			Event::EventHandler eHandler;
+			// remove all the delegates when finish this unit test.
+			Cleaner clearHanlder([&]() {eHandler.clearDelegates(); });
+
+			SingleEventListener seListener;
+			eHandler.registerListener(&seListener);
+
+			EventA eventA;
+			eventA.data = 1;
+			seListener.dataA = -1;
+			
+			eHandler.sendEvent(&eventA);
+			eHandler.dispatchAll();
+
+			errorLogger += NOT_EQ(1, seListener.dataA);
 			return errorLogger.conclusion();
 		TEST_UNIT_END;
 	}
