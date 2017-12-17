@@ -65,24 +65,6 @@ public:
 	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 	void unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
 
-	
-
-	// recursion
-	template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
-	void registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
-	// stop recursion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-	template<typename DERIVED_LISTENER>
-	void registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
-
-
-	// recursion
-	template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
-	void unregisterListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
-	// stop recursion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-	template<typename DERIVED_LISTENER>
-	void unregisterListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener);
-
-
 private:
 	template<typename EVENT_TYPE>
 	static EventMarket<EVENT_TYPE>* getEventMarket();
@@ -123,41 +105,18 @@ inline void EventHandler::sendEvent(EVENT_TYPE * e)
 template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 inline void EventHandler::registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>* pListener)
 {
-	registerListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
-		(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
+	bool zeros[] = {(addDelegate<LISTENED_EVENTS>(pListener->getDelegate<LISTENED_EVENTS>()), false)...};
+	//registerListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
+	//	(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
 }
 
 template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 inline void EventHandler::unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>* pListener)
 {
-	unregisterListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
-		(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
-}
+	bool zeros[] = { (removeDelegate<LISTENED_EVENTS>(pListener->getDelegateID<LISTENED_EVENTS>()), false)... };
 
-template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
-inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER> * pListener)
-{
-	addDelegate<FIRST_EVENT>(pListener->getDelegate<FIRST_EVENT>());
-	registerListenerRecursion<DERIVED_LISTENER, REST_EVENTS...>(pListener);
-}
-
-template<typename DERIVED_LISTENER>
-inline void EventHandler::registerListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
-{
-	// stop the recursion.
-}
-
-template<typename DERIVED_LISTENER, typename FIRST_EVENT, typename ...REST_EVENTS>
-inline void EventHandler::unregisterListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
-{
-	removeDelegate<FIRST_EVENT>(pListener->getDelegateID<FIRST_EVENT>());
-	unregisterListenerRecursion<DERIVED_LISTENER, REST_EVENTS...>(pListener);
-}
-
-template<typename DERIVED_LISTENER>
-inline void EventHandler::unregisterListenerRecursion(IEventListener<DERIVED_LISTENER>* pListener)
-{
-	// stop the recursion of unregisterListenerRecursion()
+	//unregisterListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
+	//	(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
 }
 
 template<typename EVENT_TYPE>
