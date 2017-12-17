@@ -190,3 +190,15 @@ public:
 	int eventDData = 0;
 	int eventEData = 0;
 };
+
+class SingleEventListener
+	:public Event::EventListener<SingleEventListener, EventA>
+{
+public:
+	int dataA = 0;
+
+	void ListenEvent(EventA * e)
+	{
+		dataA = e->data;
+	}
+};
