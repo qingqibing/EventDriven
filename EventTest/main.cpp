@@ -12,6 +12,13 @@
 
 DECLARE_TEST_UNITS;
 
+// the EventHandler can have multiple type,
+// use this struct to mainly use in the test
+struct TestHandlerSeries
+{
+	int data;
+};
+
 namespace TestUnit
 {
 
@@ -232,7 +239,7 @@ void AddTestUnit()
 	{
 	TEST_UNIT_START("test event handler")
 		int error = 0;
-		Event::EventHandler handler;
+		Event::EventHandler<TestHandlerSeries> handler;
 		// remove all the delegates when finish this unit test.
 		Cleaner clearHanlder([&]() {handler.clearDelegates(); });
 
@@ -288,7 +295,7 @@ void AddTestUnit()
 			int validEventAData		= 66;
 			int validEventBData		= 55;
 
-			Event::EventHandler handler;
+			Event::EventHandler<TestHandlerSeries> handler;
 			// remove all the delegates when finish this unit test.
 			Cleaner clearHanlder([&]() {handler.clearDelegates(); });
 
@@ -402,7 +409,7 @@ void AddTestUnit()
 	{
 	TEST_UNIT_START("test event listener")
 		int error = 0;
-		Event::EventHandler eHandler;
+		Event::EventHandler<TestHandlerSeries> eHandler;
 		// remove all the delegates when finish this unit test.
 		Cleaner clearHanlder([&]() {eHandler.clearDelegates(); });
 		
@@ -483,7 +490,7 @@ void AddTestUnit()
 			int validEvenDData_2 = 6;
 			int validEvenEData_2 = 7;
 
-			Event::EventHandler eHandler;
+			Event::EventHandler<TestHandlerSeries> eHandler;
 			// remove all the delegates when finish this unit test.
 			Cleaner clearHanlder([&]() {eHandler.clearDelegates(); });
 
@@ -632,7 +639,7 @@ void AddTestUnit()
 	{
 		TEST_UNIT_START("test singleEventListener")
 			
-			Event::EventHandler eHandler;
+			Event::EventHandler<TestHandlerSeries> eHandler;
 			// remove all the delegates when finish this unit test.
 			Cleaner clearHanlder([&]() {eHandler.clearDelegates(); });
 
