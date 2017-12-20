@@ -25,9 +25,6 @@
     <ClInclude Include="EventListener.h" />
     <ClInclude Include="TypeTool.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="EventHandler.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1443F327-E3AC-404C-9622-79732F5437F9}</ProjectGuid>
     <RootNamespace>EventDriven</RootNamespace>
