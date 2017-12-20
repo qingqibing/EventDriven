@@ -31,6 +31,12 @@ public:
 		{
 			dispatcher.dispatch(e);
 		}
+
+		// delete all the event pointer
+		for (auto * pEvent : bufferedEvents)
+		{
+			delete pEvent;
+		}
 		bufferedEvents.clear();
 	}
 
