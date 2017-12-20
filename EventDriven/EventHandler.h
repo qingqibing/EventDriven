@@ -44,25 +44,25 @@ template<typename HANDLER_SERIES>
 class EventHandler
 {
 public:
-	void clearDelegates();
+	static void clearDelegates();
 
 	template<typename EVENT_TYPE>
-	void addDelegate(EventDelegate<EVENT_TYPE> * dlgate);
+	static void addDelegate(EventDelegate<EVENT_TYPE> * dlgate);
 
 	template<typename EVENT_TYPE>
-	void removeDelegate(const DelegateID& removedID);
+	static void removeDelegate(const DelegateID& removedID);
 
 	template<typename EVENT_TYPE>
-	void sendEvent(EVENT_TYPE* e);
+	static void sendEvent(EVENT_TYPE* e);
 
 	// send every event to corresponding dispathcer.
-	void dispatchAll();
+	static void dispatchAll();
 
 	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
-	void registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
+	static void registerListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
 
 	template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
-	void unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
+	static void unregisterListener(EventListener<DERIVED_LISTENER, LISTENED_EVENTS...> * pListener);
 
 private:
 	template<typename EVENT_TYPE>
@@ -92,7 +92,7 @@ template<typename HANDLER_SERIES>
 template<typename EVENT_TYPE>
 inline void EventHandler<HANDLER_SERIES>::removeDelegate(const DelegateID& removedID)
 {
-	static auto * pMarket = this->getEventMarket<EVENT_TYPE>();
+	static auto * pMarket = getEventMarket<EVENT_TYPE>();
 	pMarket->dispatcher.removeDelegate(removedID);
 }
 
