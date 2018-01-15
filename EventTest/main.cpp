@@ -657,6 +657,50 @@ void AddTestUnit()
 			return errorLogger.conclusion();
 		TEST_UNIT_END;
 	}
+
+#pragma region auto unregister listener
+	TEST_UNIT_START("auto unregister listener")
+		Event::EventHandler<TestHandlerSeries> eHandler;
+		// remove all the delegates when finish this unit test.
+		Cleaner clearHanlder([&]() {eHandler.clearDelegates(); });
+
+		// prepare the event data.
+		EventA eventA;
+		eventA.data = 1;
+
+		// The listener outside the block.
+		SingleEventListener outerListener;
+		eHandler.registerListener(&outerListener);
+
+		// Do next code in the block, 
+		// ensure the listener inside the block will be destoried after the block,
+		// test the listener has been unregistered automatically.
+		{
+			SingleEventListener innerListener;
+			eHandler.registerListener(&innerListener);
+
+			// Normal function test, all listener should receive the data.
+			outerListener.dataA = -1;
+			innerListener.dataA = -1;
+
+			eHandler.sendEvent(eventA);
+			eHandler.dispatchAll();
+
+			errorLogger += NOT_EQ(1, innerListener.dataA);
+			errorLogger += NOT_EQ(1, outerListener.dataA);
+		}
+
+		// Now it's out side of the block, let's send the event again.
+		// If the innerListener has been unregistered correctly,
+		// no runtime error, else we will get an error about a dangling pointer (which point to the innerListener).
+		outerListener.dataA = -1;
+		eHandler.sendEvent(eventA);
+		eHandler.dispatchAll();
+		errorLogger += NOT_EQ(1, outerListener.dataA);
+
+		return errorLogger.conclusion();
+	TEST_UNIT_END;
+#pragma endregion
 }
 }// namespace TestUnit
 
