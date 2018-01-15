@@ -59,7 +59,10 @@ public:
 	static void removeDelegate(const DelegateID& removedID);
 
 	template<typename EVENT_TYPE>
-	static void sendEvent(EVENT_TYPE* e);
+	static void sendEvent(EVENT_TYPE e);
+
+	template<typename EVENT_TYPE, typename ...EVENT_CONSTRUCT_ARGS>
+	static void sendEvent(EVENT_CONSTRUCT_ARGS...args);
 
 	// send every event to corresponding dispathcer.
 	static void dispatchAll();
@@ -104,10 +107,20 @@ inline void EventHandler<HANDLER_SERIES>::removeDelegate(const DelegateID& remov
 
 template<typename HANDLER_SERIES>
 template<typename EVENT_TYPE>
-inline void EventHandler<HANDLER_SERIES>::sendEvent(EVENT_TYPE * e)
+inline void EventHandler<HANDLER_SERIES>::sendEvent(EVENT_TYPE e)
 {
 	static EventMarket<EVENT_TYPE> * eventMarket = getEventMarket<EVENT_TYPE>();
-	eventMarket->bufferedEvents.push_back(e);
+	EVENT_TYPE* pNewEvent = new EVENT_TYPE(std::forward<EVENT_TYPE>(e));
+	eventMarket->bufferedEvents.push_back(pNewEvent);
+}
+
+template<typename HANDLER_SERIES>
+template<typename EVENT_TYPE, typename ...EVENT_CONSTRUCT_ARGS>
+inline void EventHandler<HANDLER_SERIES>::sendEvent(EVENT_CONSTRUCT_ARGS ...args)
+{
+	static EventMarket<EVENT_TYPE> * eventMarket = getEventMarket<EVENT_TYPE>();
+	EVENT_TYPE* pNewEvent = new EVENT_TYPE(std::forward<EVENT_CONSTRUCT_ARGS...>(e));
+	eventMarket->bufferedEvents.push_back(pNewEvent);
 }
 
 template<typename HANDLER_SERIES>
@@ -117,6 +130,14 @@ inline void EventHandler<HANDLER_SERIES>::registerListener(EventListener<DERIVED
 	bool zeros[] = {(addDelegate<LISTENED_EVENTS>(pListener->getDelegate<LISTENED_EVENTS>()), false)...};
 	//registerListenerRecursion<DERIVED_LISTENER, LISTENED_EVENTS...>
 	//	(reinterpret_cast<IEventListener<DERIVED_LISTENER>*>(pListener));
+
+	// Add a function to the Listener, it will be called when the listener is being destoried.
+	// Avoid holding the dangling pointer.
+	pListener->doWhenDeconstruct(
+		[pListener]() 
+	{
+		EventHandler<HANDLER_SERIES>::unregisterListener(pListener); 
+	});
 }
 
 template<typename HANDLER_SERIES>
