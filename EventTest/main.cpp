@@ -265,8 +265,8 @@ void AddTestUnit()
 			new Event::EventDelegateWrapper<TestListenerSecond, TestEventSencond>(
 				&listener2, &TestListenerSecond::waitSecondEvent));
 		
-		handler.sendEvent(&tEvent1);
-		handler.sendEvent(&tEvent2);
+		handler.sendEvent(tEvent1);
+		handler.sendEvent(tEvent2);
 
 		error += EQ(22, listener1.recvX);
 		error += EQ(33, listener1.recvY);
@@ -315,8 +315,8 @@ void AddTestUnit()
 
 			// create a lambda to send event and dispatch them.
 			auto runEventHandler = [&]() {
-				handler.sendEvent(&eventA_1);
-				handler.sendEvent(&eventB_1);
+				handler.sendEvent(eventA_1);
+				handler.sendEvent(eventB_1);
 
 				// call delegate
 				handler.dispatchAll();
@@ -387,7 +387,7 @@ void AddTestUnit()
 		TEST_UNIT_END;
 	}
 
-	// test delegate id 
+	// test delegate id
 	{
 	TEST_UNIT_START("test delegateID(get from the delegate) can distinguish different delegate")
 		int error = 0;
@@ -438,13 +438,13 @@ void AddTestUnit()
 		testEventD_2.data = 4;
 		testEventE_2.data = 5;
 
-		eHandler.sendEvent(&testEventA);
-		eHandler.sendEvent(&testEventB);
-		eHandler.sendEvent(&testEventC_1);
-		eHandler.sendEvent(&testEventD_1);
-		eHandler.sendEvent(&testEventE_1);
-		eHandler.sendEvent(&testEventD_2);
-		eHandler.sendEvent(&testEventE_2);
+		eHandler.sendEvent(testEventA);
+		eHandler.sendEvent(testEventB);
+		eHandler.sendEvent(testEventC_1);
+		eHandler.sendEvent(testEventD_1);
+		eHandler.sendEvent(testEventE_1);
+		eHandler.sendEvent(testEventD_2);
+		eHandler.sendEvent(testEventE_2);
 
 
 		error += EQ(5, advListener.eventAData);
@@ -524,13 +524,13 @@ void AddTestUnit()
 
 			// helper function to send event and dispatch them in the handler.
 			auto runEventHandler = [&]() {
-				eHandler.sendEvent(&testEventA);
-				eHandler.sendEvent(&testEventB);
-				eHandler.sendEvent(&testEventC_1);
-				eHandler.sendEvent(&testEventD_1);
-				eHandler.sendEvent(&testEventE_1);
-				eHandler.sendEvent(&testEventD_2);
-				eHandler.sendEvent(&testEventE_2);
+				eHandler.sendEvent(testEventA);
+				eHandler.sendEvent(testEventB);
+				eHandler.sendEvent(testEventC_1);
+				eHandler.sendEvent(testEventD_1);
+				eHandler.sendEvent(testEventE_1);
+				eHandler.sendEvent(testEventD_2);
+				eHandler.sendEvent(testEventE_2);
 
 				eHandler.dispatchAll();
 			};
@@ -650,7 +650,7 @@ void AddTestUnit()
 			eventA.data = 1;
 			seListener.dataA = -1;
 			
-			eHandler.sendEvent(&eventA);
+			eHandler.sendEvent(eventA);
 			eHandler.dispatchAll();
 
 			errorLogger += NOT_EQ(1, seListener.dataA);
