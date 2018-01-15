@@ -4,18 +4,18 @@
 
 EventHandler&lt;Series&gt; | EventListener&lt;DerivedClass, Event1, ...&gt;
 -------------|---------------
-这是整个事件转发的中心，所有的事件结构体的指针都发送到这个类中的静态方法中  |  这是一个实现事件响应代码的类型，我们需要继承这个类，然后编写回调函数，接着注册到EventHandler中。
+事件转发的中心，接收事件数据，注册Listener，转发数据  |  实现相应事件的回调函数，我们需要继承这个类，然后编写回调函数，接着注册到EventHandler中。
 
 ### 内存生命周期问题
-* 所有的事件对象必须在堆上分配，由EventHandler负责释放内存
-* 由于EventHandler大量使用静态成员和方法，所以EventListener最好是一个全局的变量，避免野指针。
-* EventListener可以在栈上分配，但是要注意手动释放。
+* 事件数据可以是任何类型或者结构体，EventHandler将会使用完美转发的形式，在堆上复制构造这个事件数据，外界无需关心Handler内部事件的生命周期。
+* 注册到EventHandler中的Listener支持自动注销，无论Listener是在**栈**上还是在**堆**中，当Listener析构的时候，就会自动注销。
 
 
 ### 提示
-* 这个事件可以是任何类型，但是发送消息的时候是直接传递事件的指针，所以需要使用者自己维护这个指针的生命周期。
-* 由于使用了模板进行编译期的改动，使用了static变量的特性，所有在使用了EventHandler的项目中所有的Event类型都会出现，这是和类型相关的。哪怕只是在局部的某个函数中向EventHandler发送了一个特别的Event，EventHandler中也会出现和这个Event相关的存储结构体。所以请一定要注意在EventHandler中的Event指针和delegate（listener）指针的声明周期，需要手动维护。
-* 第二条表明这个EventHandler适合贯穿整个项目的观察者模式，尽量不要在局部使用，如果在局部使用，请确保能够手动维护event和delegate的声明周期（注销listener的方法还没有目前还没有实现，等待实现中...）
+* 由于使用了模板，一些局部代码注册的Event类型也会出现在EventHandler中，可能会给事件分发时的性能带来一定的损耗。
+* 通过为EventHandler类型的模板参数指定不同的类型，可以实现多种EventHandler，每个EventHandler是完全独立的，相互不影响。
+* Listener支持注册多个EventHandler<Series>。
+
 
 ------
 # 使用举例：
@@ -48,7 +48,7 @@ struct EventE
 ```
 
 ## 定义Listener  
-注意继承模板类中的参数，第一个是**当前这个Listener自己**，
+注意继承模板类中的参数，第一个模板参数是**当前这个Listener自己的类型**，
 接着是所有需要监听的事件结构类型。
 回调函数的名字**必须**是**ListenEvent**，参数是不同的Event类型。
 ```c++
@@ -112,11 +112,18 @@ public:
 ```
 
 ## 创建EventHandler
+可以随意使用一个类型作为EventHandler的模板参数，标记一个独立的EventHandler。
 ```c++
-Event::EventHandler eHandler;
+struct SampleSeries{};
+```
+声明EventHandler，同时用类型**SampleSeries**作为一个标记，和其他EventHandler区别。  
+由于一些遗留的代码问题，这里的演示创建了一个EventHandler的对象，但是其实所有的方法都是静态的，完全可以不创建这个对象。
+```c++
+Event::EventHandler<SampleSeries> eHandler;
 ```
 
 ## 创建并注册Listener
+注意使用指针来传递参数。
 ```c++
 AdvanceListener             advListener;
 SecondAdvanceListener       secondAListener;
@@ -146,19 +153,23 @@ testEventD_2.data = 4;
 testEventE_2.data = 5;
 ```
 ## 发送消息
+这里直接传递普通的参数，内部将会调用复制构造函数创建相应的事件对象。
 ```c++
-eHandler.sendEvent(&testEventA);
-eHandler.sendEvent(&testEventB);
-eHandler.sendEvent(&testEventC_1);
-eHandler.sendEvent(&testEventD_1);
-eHandler.sendEvent(&testEventE_1);
-eHandler.sendEvent(&testEventD_2);
-eHandler.sendEvent(&testEventE_2);
+eHandler.sendEvent(testEventA);
+eHandler.sendEvent(testEventB);
+eHandler.sendEvent(testEventC_1);
+eHandler.sendEvent(testEventD_1);
+eHandler.sendEvent(testEventE_1);
+eHandler.sendEvent(testEventD_2);
+eHandler.sendEvent(testEventE_2);
 ```
 
 ## EventHandler 分派消息
 ```c++
 eHandler.dispatchAll();
 ```
+如果执行了以上的所有步骤，相应Listener的回调函数就会被调用，在EventTest项目中有相关的代码，可以打断点的观察一下信息的分发是否正常。
 
-如果执行了以上的所有步骤，就可以直接在对应的Listener中发现对应的存储信息发生了改变，在EventTest项目中有相关的代码，可以实时的观察一下信息的分发是否正常。
+## Listener的注销
+只要脱离了Listener的作用域，它就会自动注销，当然你也可以调用unregisterListener手动注销，这个函数不会和自动注销发生冲突。
+
