@@ -1,6 +1,7 @@
 #pragma once
 #include "EventDelegate.h"
 #include "EventDispatcher.h"
+#include <functional>
 
 namespace Event
 {
@@ -16,6 +17,8 @@ template<typename DERIVED_LISTENER, typename...LISTENED_EVENTS>
 class EventListener
 {
 public:
+	virtual ~EventListener();
+
 	// get the delegate, 
 	// the delegate is on the heap,
 	// but the dispatcher will delete it,
@@ -28,14 +31,28 @@ public:
 	template<typename EVENT>
 	Event::DelegateID
 		getDelegateID();
+
+	// Register a function to be called when the Listener is destoried.
+	void doWhenDeconstruct(std::function<void(void)> task);
+
+private:
+	// This function is called when the Listener is destoried 
+	// whether on the stack or the heap.
+	// Its main goal is to avoid the situation when listener is destoried,
+	// but some one still hold its pointer.
+	// Every on can add a function to the Listener, which will be called at the deconstruction period.
+	std::vector<std::function<void(void)>> m_tasksWhenDeconstruct;
 };
 
 template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
 template<typename EVENT>
 inline Event::EventDelegate<EVENT>* EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>::getDelegate()
 {
+	// Declare the pointer to the member function.
 	void(DERIVED_LISTENER::*callBack)(EVENT *);
 	callBack = &DERIVED_LISTENER::ListenEvent;
+
+	// Wrap the member function and the host to a EventDelegateWrapper.
 	return new Event::EventDelegateWrapper<DERIVED_LISTENER, EVENT>
 		(reinterpret_cast<DERIVED_LISTENER*>(this), callBack);
 }
@@ -57,6 +74,21 @@ inline Event::DelegateID EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>::ge
 	// set the pointer to the listener
 	returnedID.pReciever = reinterpret_cast<Event::ID>(this);
 	return returnedID;
+}
+
+template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+inline EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>::~EventListener()
+{
+	for (auto & doTheJob : m_tasksWhenDeconstruct)
+	{
+		doTheJob();
+	}
+}
+
+template<typename DERIVED_LISTENER, typename ...LISTENED_EVENTS>
+inline void EventListener<DERIVED_LISTENER, LISTENED_EVENTS...>::doWhenDeconstruct(std::function<void(void)> task)
+{
+	m_tasksWhenDeconstruct.push_back(task);
 }
 
 }// namespace Event
