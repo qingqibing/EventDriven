@@ -2,9 +2,15 @@
 
 使用和注意
 
-EventHandler | EventListener&lt;DerivedClass, Event1, ...&gt;
+EventHandler&lt;Series&gt; | EventListener&lt;DerivedClass, Event1, ...&gt;
 -------------|---------------
-这是整个事件转发的中心，所有的事件结构体的指针都发送到这个类的一个模板函数中  |  这是一个实现事件响应的类型，我们需要继承这个类，然后编写回调函数，接着注册到EventHandler中。
+这是整个事件转发的中心，所有的事件结构体的指针都发送到这个类中的静态方法中  |  这是一个实现事件响应代码的类型，我们需要继承这个类，然后编写回调函数，接着注册到EventHandler中。
+
+### 内存生命周期问题
+* 所有的事件对象必须在堆上分配，由EventHandler负责释放内存
+* 由于EventHandler大量使用静态成员和方法，所以EventListener最好是一个全局的变量，避免野指针。
+* EventListener可以在栈上分配，但是要注意手动释放。
+
 
 ### 提示
 * 这个事件可以是任何类型，但是发送消息的时候是直接传递事件的指针，所以需要使用者自己维护这个指针的生命周期。
