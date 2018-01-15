@@ -49,8 +49,9 @@ struct EventE
 
 ## 定义Listener  
 注意继承模板类中的参数，第一个模板参数是**当前这个Listener自己的类型**，
-接着是所有需要监听的事件结构类型。
-回调函数的名字**必须**是**ListenEvent**，参数是不同的Event类型。
+接着是所有需要监听的事件结构类型，**每个**事件类型都必须有相应的回调函数，否则会报错。  
+回调函数的名字**必须**是**ListenEvent**，参数是不同的Event类型（一个参数指针）。
+
 ```c++
 class AdvanceListener
 	:public Event::EventListener<AdvanceListener, EventA, EventB>
@@ -112,7 +113,7 @@ public:
 ```
 
 ## 创建EventHandler
-可以随意使用一个类型作为EventHandler的模板参数，标记一个独立的EventHandler。
+首先定义一个类型用来标记不同的EventHandler，这里使用一个空结构体类型作为EventHandler的模板参数，标记一个独立的EventHandler。
 ```c++
 struct SampleSeries{};
 ```
